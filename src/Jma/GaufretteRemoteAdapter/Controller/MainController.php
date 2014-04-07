@@ -1,13 +1,11 @@
 <?php
 
-namespace Jma\SilexFileHandler;
+namespace Jma\GaufretteRemoteAdapter\Controller;
 
 use Gaufrette\Adapter;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
@@ -88,11 +86,8 @@ class MainController
     }
 
     /**
-     * $request peut contenir le paramêtre "force".
-     * Si "force" est à true, le header Content-Disposition est mis à 'attachment'
-     *
-     * @param $key La clé du fichier à download
-     * @param Request $request
+     * @param $key
+     * @param $force
      * @return StreamedResponse
      */
     public function downloadAction($key, $force)

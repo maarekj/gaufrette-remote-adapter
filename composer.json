@@ -13,7 +13,8 @@
         "symfony/debug": "*",
         "symfony/finder": "~2.5@dev",
         "symfony/filesystem": "~2.5@dev",
-        "knplabs/gaufrette": "~0.2@dev"
+        "knplabs/gaufrette": "~0.2@dev",
+        "guzzle/guzzle": "~3.8@dev"
     },
     "autoload": {
         "psr-0": {

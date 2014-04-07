@@ -2,7 +2,7 @@
 
 /* @var $app \Silex\Application */
 
-use Jma\SilexFileHandler\MainController;
+use Jma\GaufretteRemoteAdapter\Controller\MainController;
 use Symfony\Component\HttpFoundation\Request;
 
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
