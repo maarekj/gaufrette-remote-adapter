@@ -1,2 +1,2 @@
-SilexFileHandler
+gaufrette-remote-adapter
 ================
