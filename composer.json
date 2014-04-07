@@ -1,0 +1,23 @@
+{
+    "name": "jma/gaufrette-remote-adapter",
+    "description": "Webservices permettant de gérer des fichiers.",
+    "license": "Apache License v2.0",
+    "authors": [
+        {
+            "name": "Joseph Maarek",
+            "email": "josephmaarek@gmail.com"
+        }
+    ],
+    "require": {
+        "silex/silex": "~1.2@dev",
+        "symfony/debug": "*",
+        "symfony/finder": "~2.5@dev",
+        "symfony/filesystem": "~2.5@dev",
+        "knplabs/gaufrette": "~0.2@dev"
+    },
+    "autoload": {
+        "psr-0": {
+            "Jma": "src/"
+        }
+    }
+}
