@@ -15,14 +15,9 @@ class Adapter implements \Gaufrette\Adapter
 {
     protected $client;
 
-    public function __construct($baseUrl, $username, $password)
+    public function __construct(Client $client)
     {
-        $this->client = new Client(array(
-            'base_url' => $baseUrl,
-            'defaults' => array(
-                'auth' => array($username, $password)
-            )
-        ));
+        $this->client = $client;
     }
 
     /**
@@ -61,7 +56,6 @@ class Adapter implements \Gaufrette\Adapter
             ))->json();
             return $res['write'];
         } catch (\Exception $e) {
-            var_dump($e->getMessage());
             return false;
         }
     }
@@ -93,7 +87,6 @@ class Adapter implements \Gaufrette\Adapter
         try {
             return $this->client->get('keys')->json();
         } catch (\Exception $e) {
-            var_dump($e->getMessage());
             return array();
         }
     }
