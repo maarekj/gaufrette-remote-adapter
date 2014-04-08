@@ -14,13 +14,11 @@ use GuzzleHttp\Client;
 class Adapter implements \Gaufrette\Adapter
 {
     protected $client;
-    protected $baseUrl;
 
     public function __construct($baseUrl, $username, $password)
     {
-        $this->baseUrl = $baseUrl;
-
         $this->client = new Client(array(
+            'base_url' => $baseUrl,
             'defaults' => array(
                 'auth' => array($username, $password)
             )
@@ -37,7 +35,7 @@ class Adapter implements \Gaufrette\Adapter
     public function read($key)
     {
         try {
-            $res = $this->client->get($this->baseUrl . '/read/' . $key)->json();
+            $res = $this->client->get('read/' . $key)->json();
             return base64_decode($res['content']);
         } catch (\Exception $e) {
             return false;
@@ -55,7 +53,7 @@ class Adapter implements \Gaufrette\Adapter
     public function write($key, $content)
     {
         try {
-            $res = $this->client->post($this->baseUrl . '/write', array(
+            $res = $this->client->post('write', array(
                 'body' => array(
                     'key' => $key,
                     'content' => $content
@@ -78,7 +76,7 @@ class Adapter implements \Gaufrette\Adapter
     public function exists($key)
     {
         try {
-            $this->client->get($this->baseUrl . '/exists/' . $key)->json();
+            $this->client->get('exists/' . $key)->json();
             return true;
         } catch (\Exception $e) {
             return false;
@@ -93,7 +91,7 @@ class Adapter implements \Gaufrette\Adapter
     public function keys()
     {
         try {
-            return $this->client->get($this->baseUrl . '/keys')->json();
+            return $this->client->get('keys')->json();
         } catch (\Exception $e) {
             var_dump($e->getMessage());
             return array();
@@ -110,7 +108,7 @@ class Adapter implements \Gaufrette\Adapter
     public function mtime($key)
     {
         try {
-            $res = $this->client->get($this->baseUrl . '/meta/' . $key)->json();
+            $res = $this->client->get('meta/' . $key)->json();
             return $res['mtime'];
         } catch (\Exception $e) {
             return false;
@@ -127,7 +125,7 @@ class Adapter implements \Gaufrette\Adapter
     public function delete($key)
     {
         try {
-            $this->client->post($this->baseUrl . '/delete', array(
+            $this->client->post('delete', array(
                 'body' => array(
                     'key' => $key
                 )
@@ -149,7 +147,7 @@ class Adapter implements \Gaufrette\Adapter
     public function rename($sourceKey, $targetKey)
     {
         try {
-            $this->client->post($this->baseUrl . '/rename', array(
+            $this->client->post('rename', array(
                 'body' => array(
                     'sourceKey' => $sourceKey,
                     'targetKey' => $targetKey
@@ -171,7 +169,7 @@ class Adapter implements \Gaufrette\Adapter
     public function isDirectory($key)
     {
         try {
-            $res = $this->client->get($this->baseUrl . '/meta/' . $key)->json();
+            $res = $this->client->get('meta/' . $key)->json();
             return $res['isDirectory'];
         } catch (\Exception $e) {
             return false;
