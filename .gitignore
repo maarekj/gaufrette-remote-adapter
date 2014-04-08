@@ -1,2 +1,4 @@
 /vendor/
 .idea
+config/dev.php
+config/prod.php

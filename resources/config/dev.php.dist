@@ -1,0 +1,21 @@
+<?php
+
+use Gaufrette\Adapter\Local;
+use Jma\GaufretteRemoteAdapter\Security\UserProvider;
+
+$app['baseDir'] = __DIR__ . '/../../web/uploads';
+
+$app['gaufrette.adapter'] = $app->share(function ($app) {
+    return new Local($app['baseDir'], true);
+});
+
+$app['security.userprovider'] = $app->share(function ($app) {
+    return new UserProvider(array(
+        'sav2' => array(
+            'password' => 'sav2',
+            'roles' => array('ROLE_USER'),
+            'adapter' => function () use ($app) {
+                    return $app['gaufrette.adapter'];
+                })
+    ));
+});

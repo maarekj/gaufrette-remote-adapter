@@ -9,17 +9,22 @@
 namespace Jma\GaufretteRemoteAdapter\Adapter;
 
 
-use Guzzle\Http\Client;
+use GuzzleHttp\Client;
 
 class Adapter implements \Gaufrette\Adapter
 {
     protected $client;
     protected $baseUrl;
 
-    public function __construct($baseUrl)
+    public function __construct($baseUrl, $username, $password)
     {
         $this->baseUrl = $baseUrl;
-        $this->client = new Client();
+
+        $this->client = new Client(array(
+            'defaults' => array(
+                'auth' => array($username, $password)
+            )
+        ));
     }
 
     /**
@@ -32,7 +37,7 @@ class Adapter implements \Gaufrette\Adapter
     public function read($key)
     {
         try {
-            $res = $this->client->get($this->baseUrl . '/read/' . $key)->send()->json();
+            $res = $this->client->get($this->baseUrl . '/read/' . $key)->json();
             return base64_decode($res['content']);
         } catch (\Exception $e) {
             return false;
@@ -50,12 +55,15 @@ class Adapter implements \Gaufrette\Adapter
     public function write($key, $content)
     {
         try {
-            $res = $this->client->post($this->baseUrl . '/write', null, array(
-                'key' => $key,
-                'content' => $content
-            ))->send()->json();
+            $res = $this->client->post($this->baseUrl . '/write', array(
+                'body' => array(
+                    'key' => $key,
+                    'content' => $content
+                )
+            ))->json();
             return $res['write'];
         } catch (\Exception $e) {
+            var_dump($e->getMessage());
             return false;
         }
     }
@@ -70,7 +78,7 @@ class Adapter implements \Gaufrette\Adapter
     public function exists($key)
     {
         try {
-            $this->client->get($this->baseUrl . '/exists/' . $key)->send()->json();
+            $this->client->get($this->baseUrl . '/exists/' . $key)->json();
             return true;
         } catch (\Exception $e) {
             return false;
@@ -85,8 +93,9 @@ class Adapter implements \Gaufrette\Adapter
     public function keys()
     {
         try {
-            return $this->client->get($this->baseUrl . '/keys')->send()->json();
+            return $this->client->get($this->baseUrl . '/keys')->json();
         } catch (\Exception $e) {
+            var_dump($e->getMessage());
             return array();
         }
     }
@@ -101,7 +110,7 @@ class Adapter implements \Gaufrette\Adapter
     public function mtime($key)
     {
         try {
-            $res = $this->client->get($this->baseUrl . '/meta/' . $key)->send()->json();
+            $res = $this->client->get($this->baseUrl . '/meta/' . $key)->json();
             return $res['mtime'];
         } catch (\Exception $e) {
             return false;
@@ -118,9 +127,11 @@ class Adapter implements \Gaufrette\Adapter
     public function delete($key)
     {
         try {
-            $this->client->post($this->baseUrl . '/delete', null, array(
-                'key' => $key
-            ))->send()->json();
+            $this->client->post($this->baseUrl . '/delete', array(
+                'body' => array(
+                    'key' => $key
+                )
+            ))->json();
             return true;
         } catch (\Exception $e) {
             return false;
@@ -138,10 +149,12 @@ class Adapter implements \Gaufrette\Adapter
     public function rename($sourceKey, $targetKey)
     {
         try {
-            $this->client->post($this->baseUrl . '/rename', null, array(
-                'sourceKey' => $sourceKey,
-                'targetKey' => $targetKey
-            ))->send()->json();
+            $this->client->post($this->baseUrl . '/rename', array(
+                'body' => array(
+                    'sourceKey' => $sourceKey,
+                    'targetKey' => $targetKey
+                )
+            ))->json();
             return true;
         } catch (\Exception $e) {
             return false;
@@ -158,7 +171,7 @@ class Adapter implements \Gaufrette\Adapter
     public function isDirectory($key)
     {
         try {
-            $res = $this->client->get($this->baseUrl . '/meta/' . $key)->send()->json();
+            $res = $this->client->get($this->baseUrl . '/meta/' . $key)->json();
             return $res['isDirectory'];
         } catch (\Exception $e) {
             return false;

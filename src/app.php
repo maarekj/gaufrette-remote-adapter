@@ -7,10 +7,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 
-$app['controllers.main'] = $app->share(function () use ($app) {
-    return new MainController($app['gaufrette.adapter']);
-});
+require_once __DIR__ . '/../src/security.php';
 
+$app['controllers.main'] = $app->share(function () use ($app) {
+    $adapter = $app['security']->getToken()->getUser()->getGaufretteAdapter();
+    return new MainController($adapter);
+});
 
 $app->get('/keys', 'controllers.main:keysAction');
 $app->get('/read/{key}', 'controllers.main:readAction')->assert('key', '.*');
