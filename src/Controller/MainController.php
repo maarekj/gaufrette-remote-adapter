@@ -67,11 +67,16 @@ class MainController
 
     public function renameAction($source, $target)
     {
-        $rename = $this->adapter->rename($source, $target);
+        try {
+            $rename = $this->adapter->rename($source, $target);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException();
+        }
+
         if ($rename === true) {
             return new JsonResponse(array('sourceKey' => $source, 'targetKey' => $target));
         } else {
-            throw new BadRequestHttpException();
+            throw new \Exception();
         }
     }
 
