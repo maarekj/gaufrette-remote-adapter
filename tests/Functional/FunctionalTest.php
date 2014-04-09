@@ -23,12 +23,12 @@ use GuzzleHttp\Stream;
  * Class FunctionalTest
  * @package Jma\GaufretteRemoteAdapter\Tests\Functional
  *
- * @runTestsInSeparateProcesses
+
  */
 class FunctionalTest extends WebTestCase
 {
     /**
-     * @var \Symfony\Component\BrowserKit\Client
+     * @var \Symfony\Component\HttpKernel\Client
      */
     protected $silex;
 
@@ -87,6 +87,23 @@ class FunctionalTest extends WebTestCase
         return $app;
     }
 
+    public function testApiWithNotAuth()
+    {
+        $client = $this->createClient();
+        $client->request('GET', '/keys');
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    }
+
+    public function testApiWithAuthNotValid()
+    {
+        $client = $this->createClient([
+            'PHP_AUTH_USER' => 'notvalid',
+            'PHP_AUTH_PW' => 'notvalid'
+        ]);
+        $client->request('GET', '/keys');
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    }
+
     public function testKeys()
     {
         $this->assertEquals(['file1', 'file2', 'file3'], $this->filesystem->keys());
@@ -133,6 +150,53 @@ class FunctionalTest extends WebTestCase
     public function testWriteOnAlreadyExistsForce()
     {
         $this->assertEquals(10, $this->filesystem->write('file1', '0123456890', 1));
+        $this->assertEquals('0123456890', $this->filesystem->read('file1'));
+    }
+
+    public function testRename()
+    {
+        $this->assertEquals('file1', $this->filesystem->read('file1'));
+        $this->assertTrue($this->filesystem->rename('file1', 'newfile'));
+        $this->assertEquals('file1', $this->filesystem->read('newfile'));
+        $this->assertFalse($this->filesystem->has('file1'));
+    }
+
+    /**
+     * @expectedException \Gaufrette\Exception\FileNotFound
+     */
+    public function testRenameOnSourceKeyNotExists()
+    {
+        $this->filesystem->rename('notexists', 'notexists2');
+    }
+
+    /**
+     * @expectedException \Gaufrette\Exception\UnexpectedFile
+     */
+    public function testRenameOnTargetKeyExists()
+    {
+        $this->filesystem->rename('file1', 'file2');
+    }
+
+    public function testDownloadAction()
+    {
+        $this->silex->request('GET', 'download/file1');
+        $this->assertEquals('file1', $this->silex->getInternalResponse()->getContent());
+    }
+
+    public function testDelete()
+    {
+        $this->assertTrue($this->filesystem->has('file1'));
+        $this->assertTrue($this->filesystem->delete('file1'));
+        $this->assertFalse($this->filesystem->has('file1'));
+    }
+
+    /**
+     * @expectedException \Gaufrette\Exception\FileNotFound
+     */
+    public function testDeleteOnKeyNotExists()
+    {
+        $this->assertFalse($this->filesystem->has('notexists'));
+        $this->filesystem->delete('notexists');
     }
 }
  

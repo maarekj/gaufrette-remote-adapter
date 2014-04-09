@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 
-require_once __DIR__ . '/../src/security.php';
+require __DIR__ . '/../src/security.php';
 
 $app['controllers.main'] = $app->share(function () use ($app) {
     $adapter = $app['security']->getToken()->getUser()->getGaufretteAdapter();
