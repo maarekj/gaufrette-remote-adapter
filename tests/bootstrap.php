@@ -13,4 +13,3 @@ EOT
 }
 
 $loader->addPsr4('Jma\\GaufretteRemoteAdapter\\Tests\\', __DIR__);
-
